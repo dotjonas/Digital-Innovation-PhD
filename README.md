@@ -3,3 +3,5 @@ Scrips used for my PhD dissertation to structure data and run Latent Semantic An
 and Social Network Analysis.
 
 Feel free to use them any way you can.
+
+NB! Work in progress.
