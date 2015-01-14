@@ -4,4 +4,4 @@ and Social Network Analysis.
 
 Feel free to use them any way you can.
 
-NB! Work in progress.
+Work in progress.
