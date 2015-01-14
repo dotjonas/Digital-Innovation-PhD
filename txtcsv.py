@@ -24,7 +24,7 @@ for p in posts:
 	author = author.replace("LikeCommentFollow-upMoreViewGet LinkComment\nReport this item for being abusive or offensive.Your name will not be sent along with this report.Report \n\n Report", "")
  	author = author.replace("eCommentFollow-upMoreShareViewGet LinkComment","")
  	author = author.replace("eCommentFollow-upMoreViewGet LinkComment", "")
- 	author = author.replace("Report this item for being abusive or offensive.Your name will not be sent along with this report.Report", "DANG!")
+ 	author = author.replace("Report this item for being abusive or offensive.Your name will not be sent along with this report.Report", "")
 	author = author.replace("  Report", "")
 	author = author.replace("RcommentsView less ", "")
 	author = author.replace("eCommentFollow-upMoreShareViewGet", "")
