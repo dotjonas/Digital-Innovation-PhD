@@ -3,7 +3,7 @@
 import re
 import csv
 
-f = open('post_text.txt')
+f = open('../post_text.txt')
 authors = []
 bodies = []
 dates = []
@@ -57,7 +57,7 @@ print 'Total number of dates: ' + str(len(dates))
 f.close()
 
 # write structured data to .csv
-with open('data.csv', 'wb') as f:
+with open('../data.csv', 'wb') as f:
     writer = csv.writer(f)
     rows = zip(authours,bodies,dates)
 

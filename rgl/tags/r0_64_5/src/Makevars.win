@@ -1,0 +1,10 @@
+#
+# Makevars file for Win32 port 
+# This file is part of RGL
+#
+# $Id: Makevars.win 14 2003-05-21 11:08:25Z  $
+#
+
+PKG_CPPFLAGS=-Izlib -Ilpng124
+PKG_CXXFLAGS=-fno-exceptions -fno-rtti
+PKG_LIBS=-lgdi32 -lopengl32 -lzlib -lpng
