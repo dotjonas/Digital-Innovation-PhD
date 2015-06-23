@@ -1,3 +1,5 @@
+## GENERATES SEMANTIC VECTOR SPACE FROM DOCUMENT REPOSITORY
+library(SnowballC)
 library(lsa)
 
 # assign directory holding your docs
@@ -7,65 +9,27 @@ txtdir <- "../lsadocs"
 data(stopwords_en)
 
 # create de-noised document-term matrix
-tm <- textmatrix(txtdir, stemming = TRUE, stopwords = stopwords_en) # stemming = TRUE, 
+docterm.matrix <- textmatrix(txtdir, stemming = TRUE, stopwords = stopwords_en) # stemming = TRUE, 
 
 # apply TF-IDF weighing algorithm
-wm <- lw_logtf(tm) * gw_idf(tm) 
-summary(wm)
-head(wm)
+docterm.weighed <- lw_logtf(docterm.matrix) * gw_idf(docterm.matrix) 
+summary(docterm.weighed)
+head(docterm.weighed)
 
 # create the latent semantic space
-LSAspace <- lsa(wm)
-dim(LSAspace)
+lsa.space <- lsa(docterm.weighed)
+summary(lsa.space)
 
-# display it as a textmatrix again
-LSAmatrix <- as.textmatrix(LSAspace)
-LSAmatrix # YES! SVD IS NOW COMPUTED!
-dim(LSAmatrix)
-tail(rownames(LSAmatrix))
+# display it as a texmatrixatrix again
+lsa.matrix <- as.textmatrix(lsa.space)
+lsa.matrix # YES! SVD IS NOW COMPUTED!
+dim(lsa.matrix)
+head(rownames(lsa.matrix))
 
 # calculate the optimal dimensionality 
-share <- 0.5 # 119 dimensions with standard share of 0.5
-k <- min(which(cumsum(LSAspace$sk/sum(LSAspace$sk))>=share))
+share <- 0.5 # 118 dimensions with standard share of 0.5
+k <- min(which(cumsum(lsa.space$sk/sum(lsa.space$sk))>=share))
 print(k)
-LSAreduced <- lsa(wm, dims = k)
-summary(LSAreduced)
-
-## EXTRAS FROM HERE
-
-# scree of varience explained by dims
-ul <- unlist(LSAreduced)
-screeplot(diag(ul))
-s <- as.list(LSAmatrix$sk)
-screeplot(s, xlim = c(1,1000), ylim = c(1,100))
-LSAmatrix$sk
-
-# plot it!
-t.locs <- LSAspace$tk %*% diag(LSAspace$sk)
-plot(t.locs, type = "p")
-text(t.locs, labels = rownames(LSAspace$tk))
-
-
-# compare two terms with the cosine measure
-cosine(LSAmatrix["cashier", ], LSAmatrix["angela", ])
-cosine(LSAmatrix["digitaleagl", ], LSAmatrix["radical", ])
-
-# calc associations for term
-associate(LSAmatrix, "teach", measure = "cosine")
-associate(LSAmatrix, "issue", measure = "cosine")
-
-# demonstrate generation of a query
-query("digitaleagl disrupt radical please", rownames(LSAmatrix))
-
-# compare two documents with pearson
-cor(wm[ ,1], wm[ ,2], method = "pearson")
-
-## LSA search
-
-# sk - The sigma diagonal matrix
-sk <- matrix(0, length(LSAspace$sk), length(LSAspace$sk))
-       for (i in 1:length(LSAspace$sk)) {
- 		sk[i,i] <- LSAspace$sk[i]
- 	}
-print(sk[1:8,1:8])
+lsa.reduced <- lsa(docterm.weighed, dims = k)
+summary(lsa.reduced)
 

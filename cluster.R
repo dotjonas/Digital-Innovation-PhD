@@ -1,67 +1,64 @@
-## PERFORMS HIERARCHICAL CLUSTERING OF MICRO SHIFTS
+## K-MEANS CLUSTERING OF MICRO SHIFTS
+library(ggplot2)
+nc = 15 # number of clusters to test cluster sum of squares
+nclust = 5 # number of clusters selected as inout for kmeans algorithm
 
-# Determine optimal number of k-means clusters
-wss <- (nrow(tm)-1) * sum(apply(msm, 2, var))
-for (i in 1:5) { 
-      wss[i] <- sum(kmeans(msm, centers = i)$withinss)
+# Determine optimal number of k-means clusters within group SSE
+wss <- (nrow(ms.matrix)-1) * sum(apply(ms.matrix, 2, var))
+for (i in 2:nc) { 
+      wss[i] <- sum(kmeans(ms.matrix, centers = i)$withinss)
 }
-plot(1:5, wss, type="b", xlab="Number of Clusters", ylab="Within groups sum of squares", main = "Cluster sum of squares")
+#plot with ggplot2
+n <- as.data.frame(wss)
+n$nclust <- 1:nc
+n
+ggplot(data=n, aes(x=nclust,y=wss)) + 
+      geom_line(alpha=.3) + 
+      geom_point(size=3) +
+      xlab("Number of Clusters") +
+      ylab("Within groups sum of squares") +
+      ggtitle("Cluster sum of squares")
+
+# create dataframe with term, mean.sin.val, total count columns 
+mean.sin.val <- apply(ms.matrix, 1, mean)
+summary(mean.sin.val)
+cluster.df <- as.data.frame(mean.sin.val)
+sum.sin.val <- apply(ms.matrix,1,sum)
+table(sum.sin.val)
+cluster.df$sum.sin.val <- factor(sum.sin.val)
+head(cluster.df)
 
 # perform k-means clustering with 5 clusters (as determined above)
-kc <- kmeans(msm, 5) # k cluster solution
-# get cluster means 
-aggregate(msm[1:273], by = list(kc$cluster), FUN = mean)
-aggregate(kc$cluster, by = list(msv), FUN = mean) # cluster for each term
+kclust <- kmeans(cluster.df, nclust) # k cluster solution
+kclust
+kclust$totss
+table(kclust$cluster)
 
-# append cluster assignment
-msm <- data.frame(msm[1:273], kc$cluster)
+# update data frame with cluster and term columns
+cluster.df$cluster = factor(kclust$cluster)
+centers = as.data.frame(kclust$centers)
+cluster.df$term <- ms.vector
+head(centers)
+head(cluster.df)
 
-# PLOT
+# plot variance
+ggplot(data=cluster.df, aes(x=sum.sin.val, y=mean.sin.val)) + 
+      geom_point() + 
+      geom_point(data=centers, aes(x=sum.sin.val,y=mean.sin.val, color='Center')) +
+      geom_point(data=centers, aes(x=sum.sin.val,y=mean.sin.val, color='Center'), size=52, alpha=.3, show_guide = FALSE)
 
-# Cluster Plot against 1st 2 principal components
+# generate term vectors for each cluster
+cluster.terms <- data.frame()
+for (i in 1:nclust){
+      t <- rownames(subset(cluster.df,cluster.df$cluster==i))
+      print(c("Cluster",i,t,"/n"))
+      cluster.terms$i <- t
+}
+cluster.terms
+      
 
-# vary parameters for most readable graph
-library(cluster) 
-clusplot(msm, kc$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
-
-# Centroid Plot against 1st 2 discriminant functions
-library(fpc)
-plotcluster(msm, kc$cluster)
-
-# plot it
-library(cluster)
-library(HSAUR)
-
-dissE <- daisy(msm) 
-dE2   <- dissE^2
-sk2   <- silhouette(kc$cluster, dE2)
-plot(sk2)
-
-
-
-# get cluster means 
-cmean <- as.data.frame(mn)
-aggregate(cmean, by = m, FUN = mean)
-
-
-## VARIOUS PLOTS FOR CLUSTER DENDOGRAMS
-
-# draw fan type dendo with ape
-library(ape)
-plot(as.phylo(hc), type = "fan")
-
-# plot dendrogram with some cuts
-op = par(mfrow = c(2, 1))
-plot(cut(hc, breaks=1:50, h = 75), main = "Upper tree of cut at h=75")
-plot(cut(clm, h = 75)$lower[[2]], main = "Second branch of lower tree with cut at h=75")
-
-# generate micro shift - document matrix
-
-
-
-# Ward Hierarchical Clustering
-clm <- dist(msm, method = "euclidean") # calculate distance matrix
-nclust <- 4
+## WARD HIARARCHICAL CLUSTERING
+clm <- dist(ms.matrix, method = "euclidean") # calculate distance matrix
 hc <- hclust(clm, method="ward.D") 
 groups <- cutree(hc, k = nclust) # cut tree into k clusters
 plot(hc, main = "Micro Shift Dimension Clustering") # display dendogram
@@ -77,5 +74,4 @@ for (i in 1:nclust){
 }
 
 # append cluster assignment
-
 clm <- data.frame(clm, hc$cluster)

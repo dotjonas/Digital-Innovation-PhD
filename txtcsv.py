@@ -38,13 +38,11 @@ for p in posts:
 	bodies.append(body)
 	print 'Body: ' + str(body)
 
-
 	# get timestamp
 	index = p.find('ago  ')
 	date = p[0:index+1]
 	dates.append(date)
-	print 'Date: ' + str(date) + '\n'
-		
+	print 'Date: ' + str(date) + '\n'	
 
 # print output to console
 print '\n' + 'EXTRACTION REPORT'

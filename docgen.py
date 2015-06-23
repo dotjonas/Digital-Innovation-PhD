@@ -3,6 +3,7 @@
 import csv
 import re
 
+directory = "../lsadocs/"
 txtcol = 6 # set the column holding the text
 
 with open('../data_lsa.csv', 'U') as csvfile:
@@ -19,7 +20,7 @@ with open('../data_lsa.csv', 'U') as csvfile:
 		txt = str(content)
 		# add value to files with < 50 characters
 		if (len(txt) < 50):
-			txt = "No available terms for me to feast on"
+			txt = "123456789"
 		else:		
 		# generate a nice, clean string
 			txt = txt.translate(None, '[]@:')
@@ -36,6 +37,8 @@ with open('../data_lsa.csv', 'U') as csvfile:
 		
 			
 		#write to .txt file
+		if not os.path.exists(directory):
+    		os.makedirs(directory)
 		f = open("../lsadocs/"+str(fcount)+'.txt', 'w')
 		f.write(txt)
 		

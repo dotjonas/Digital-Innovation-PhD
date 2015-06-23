@@ -1,9 +1,34 @@
 ## PREPROCESSING
 
+net.df <- as.data.frame(cluster.df)
+net.df$term <- ms.vector
+
+netclust <- as.data.frame(cluster.df$cluster)
+netterm <- as.data.frame(ms.vector)
+head(netclust)
+head(netterm)
+
+net <- merge(netclust,netterm,by='cluster')
+
+head(net.df)
+
+dim(net.df)
+
+
+library(data.table)
+net.dt = data.table(net.df)
+
+net.dt <- net.dt[, lapply(net.dt, FUN=, by = list(cluster)]
+head(net.dt)
+
 # CHANGE!!! generate binary network from dynamic controversy matrices
-bn <- LSAmatrix[cv, ] # subset LSAmatrix rows by the controversy vector
+bn <- lsa.matrix[ms.vector, ] # subset lsa.matrix rows by the controversy vector
 table(bn)
+
 binet <- as.matrix((bn > 0) + 0)
+authors <- data$AUTHOR
+binet <- as.data.frame(binet)
+colnames(binet) <- authors
 table(binet)
 
 # genereate term-author adjacency matrix

@@ -1,31 +1,14 @@
-## MEASURES EFFECT OF MICRO-SHIFTS ON ACTOR NETWORK
-## Run microshift.R procedure first to identify micro shifts
+## GENERATES DATA FRAME CONTAINING LONGITUDAL DATA
+## Run lsa.R procedure first 
 
 
 ## clean and order document colnames
-dynlsa <- as.data.frame(LSAmatrix)
-names(dynlsa) = sub("*.txt","",names(dynlsa)) # simplify column names 
-write.csv(dynlsa, "../dynlsalsa.csv") # create scv to reorder columns manually in ascending order
+dyn <- as.matrix(LSAmatrix)
+names(dyn) = sub("*.txt","",names(dyn)) # simplify column names 
+write.csv(dyn, "../dynlsa.csv") # create scv to reorder columns manually in ascending order
 dynlsa <- read.csv("../dynet_ordered.csv") # read the ordered data back in
 
-
-
-# attribute author to document
-
-
-
-
-
-
-
-
-
-
-
-
-
-## split into relevant time intervals for each month
-
+## assign time intervals of one month to each
 dec12 <- dynlsa[,1724:1843]
 jan13 <- dynlsa[,1597:1723]
 feb13 <- dynlsa[,1503:1596]
@@ -44,5 +27,7 @@ feb14 <- dynlsa[,366:478]
 mar14 <- dynlsa[,122:365]
 apr14 <- dynlsa[,68:121]
 may14 <- dynlsa[,1:67]
+
+months <- c(dec12,jan13,feb13,mar13,apr13,may13,jun13,jul13,aug13,sep13,oct13,nov13,dec13,jan14,feb14,mar14,apr14,may14)
 
 # add each month to a list of matrices
